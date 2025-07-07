@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Cart</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header>
+    <h1>🛍️ Your Cart</h1>
+    <a href="index.html" style="color:white;">⬅ Back to Shop</a>
+  </header>
+
+  <main id="cart-items"></main>
+  <div id="total"></div>
+  <br>
+  <button onclick="checkout()">Proceed to Checkout</button>
+
+  <script>
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    function updateCartDisplay() {
+      const cartItems = document.getElementById("cart-items");
+      const totalDiv = document.getElementById("total");
+      cartItems.innerHTML = "";
+      let total = 0;
+
+      cart.forEach((item, index) => {
+        total += item.price * item.quantity;
+        const div = document.createElement("div");
+        div.className = "product";
+        div.innerHTML = \`
+          <h3>\${item.name}</h3>
+          <p>₹\${item.price} x \${item.quantity}</p>
+          <button onclick="changeQuantity(\${index}, 1)">+</button>
+          <button onclick="changeQuantity(\${index}, -1)">-</button>
+          <button onclick="removeItem(\${index})">Remove</button>
+        \`;
+        cartItems.appendChild(div);
+      });
+
+      totalDiv.innerHTML = \`<h3>Total: ₹\${total}</h3>\`;
+    }
+
+    function changeQuantity(index, change) {
+      cart[index].quantity += change;
+      if (cart[index].quantity <= 0) cart.splice(index, 1);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      updateCartDisplay();
+    }
+
+    function removeItem(index) {
+      cart.splice(index, 1);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      updateCartDisplay();
+    }
+
+    function checkout() {
+      window.location.href = "checkout.html";
+    }
+
+    updateCartDisplay();
+  </script>
+
+</body>
+</html>
